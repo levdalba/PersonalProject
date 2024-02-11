@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, TextField, Button } from '@mui/material'
+import { Box, TextField, Button, Typography } from '@mui/material'
 import {
     Chart,
     LinearScale,
@@ -99,6 +99,26 @@ const Linear = () => {
 
     return (
         <div>
+            <Typography
+                sx={{
+                    fontSize: '25px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    color: 'green',
+                }}
+            >
+                Solve Linear problems and display graphs with us!
+            </Typography>
+            <Typography
+                sx={{
+                    fontSize: '25px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    color: 'brown',
+                }}
+            >
+                Input your equations to solve them!
+            </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                 <TextField
                     label="X Value"
@@ -122,7 +142,7 @@ const Linear = () => {
                     color="warning"
                     onClick={addData}
                 >
-                    Add Data
+                    Plot
                 </Button>
             </Box>
             <div

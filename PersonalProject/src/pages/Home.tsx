@@ -1,12 +1,15 @@
-import React from 'react'
-import { Typography, Button, Box, TextField } from '@mui/material'
+import React, { useState } from 'react'
+import { Typography, Button } from '@mui/material'
 import graph from '../logo/graph.png'
 import './Home.css'
 import scroll from '../logo/scroll.png'
 import Linear from './linear'
 import Cubic from './cubic'
 import Polynomial from './polynomial'
+
 const Home = () => {
+    const [selected, setSelected] = useState('')
+
     return (
         <div>
             <div className="welcome">
@@ -33,6 +36,7 @@ const Home = () => {
                             sx={{ width: '100px', borderRadius: '10px' }}
                             variant="contained"
                             color="primary"
+                            onClick={() => setSelected('linear')}
                         >
                             Linear
                         </Button>
@@ -40,6 +44,7 @@ const Home = () => {
                             sx={{ width: '100px', borderRadius: '10px' }}
                             variant="contained"
                             color="primary"
+                            onClick={() => setSelected('cubic')}
                         >
                             Cubic
                         </Button>
@@ -47,35 +52,28 @@ const Home = () => {
                             sx={{ borderRadius: '10px' }}
                             variant="contained"
                             color="primary"
+                            onClick={() => setSelected('polynomial')}
                         >
                             Polynomial
                         </Button>
                     </Typography>
                 </div>
             </div>
-            <div className="linear">
-                <Typography
-                    sx={{
-                        fontSize: '25px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        color: 'green',
-                    }}
-                >
-                    Solve Linear problems and display graphs with us!
-                </Typography>
-                <Typography
-                    sx={{
-                        fontSize: '25px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        color: 'brown',
-                    }}
-                >
-                    Input your equations to solve them!
-                </Typography>
-                <Linear />
-            </div>
+            {selected === 'linear' && (
+                <div className="linear">
+                    <Linear />
+                </div>
+            )}
+            {selected === 'cubic' && (
+                <div className="cubic">
+                    <Cubic />
+                </div>
+            )}
+            {selected === 'polynomial' && (
+                <div className="polynomial">
+                    <Polynomial />
+                </div>
+            )}
         </div>
     )
 }
