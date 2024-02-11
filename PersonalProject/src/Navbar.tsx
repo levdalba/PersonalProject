@@ -2,6 +2,7 @@ import React from 'react'
 import { AppBar, Toolbar, Typography, Button } from '@mui/material'
 import './Navbar.css'
 import logo from './logo/logo.png'
+import { Link } from 'react-router-dom'
 
 const Navbar = () => {
     return (
@@ -15,6 +16,8 @@ const Navbar = () => {
                 </Typography>
                 <div className="links">
                     <Button
+                        component={Link}
+                        to="/"
                         color="inherit"
                         sx={{
                             padding: '7px',
@@ -30,6 +33,8 @@ const Navbar = () => {
                         Home
                     </Button>
                     <Button
+                        component={Link}
+                        to="/portfolio"
                         color="inherit"
                         sx={{
                             padding: '7px',
@@ -45,6 +50,8 @@ const Navbar = () => {
                         Portfolio
                     </Button>
                     <Button
+                        component={Link}
+                        to="/about"
                         color="inherit"
                         sx={{
                             padding: '7px',
@@ -61,6 +68,8 @@ const Navbar = () => {
                 </div>
 
                 <Button
+                    component={Link}
+                    to="/contact"
                     sx={{
                         border: '1px solid blue',
                         color: 'blue',

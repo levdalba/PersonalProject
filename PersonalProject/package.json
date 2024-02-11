@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.12.4",
+    "@mui/styles": "^5.15.9",
     "chart.js": "^4.4.1",
     "mathjs": "^12.3.2",
     "polynomial": "^1.4.5",
