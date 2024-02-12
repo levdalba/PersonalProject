@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Box, TextField, Button, Typography } from '@mui/material'
 import {
     Chart,
@@ -7,87 +7,56 @@ import {
     PointElement,
     LineElement,
 } from 'chart.js'
+import * as math from 'mathjs'
 
 Chart.register(LinearScale, ScatterController, PointElement, LineElement)
-let chartInstance: Chart<
-    'scatter',
-    { x: number; y: number }[],
-    unknown
-> | null = null
 
 const Linear = () => {
-    const [xValues, setXValues] = useState<number[]>([])
-    const [yValues, setYValues] = useState<number[]>([])
     const [xInput, setXInput] = useState('')
     const [yInput, setYInput] = useState('')
+    const [data, setData] = useState<{ x: number; y: number }[]>([])
+    const [coefficients, setCoefficients] = useState<number[]>([])
+    const chartRef = useRef<Chart | null>(null)
 
     const addData = () => {
-        const x = xInput.split(',').map(Number)
-        const y = yInput.split(',').map(Number)
+        const newData = [
+            ...data,
+            { x: parseFloat(xInput), y: parseFloat(yInput) },
+        ]
+        setData(newData)
 
-        if (x.every(isFinite) && y.every(isFinite) && x.length === y.length) {
-            setXValues((prevXValues) => [...prevXValues, ...x])
-            setYValues((prevYValues) => [...prevYValues, ...y])
-            updateChart()
-        }
-
-        setXInput('')
-        setYInput('')
+        const newCoefficients = linearLeastSquares(newData)
+        setCoefficients(newCoefficients)
     }
 
-    const linearApproximation = (xValues: number[], yValues: number[]) => {
-        const n = xValues.length
-        let sumX = 0,
-            sumY = 0,
-            sumXY = 0,
-            sumXX = 0
-        for (let i = 0; i < n; i++) {
-            sumX += xValues[i]
-            sumY += yValues[i]
-            sumXY += xValues[i] * yValues[i]
-            sumXX += xValues[i] * xValues[i]
-        }
-        const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX)
-        const intercept = (sumY - slope * sumX) / n
-        return [intercept, slope]
+    const linearLeastSquares = (data: { x: number; y: number }[]) => {
+        const xs = data.map((point) => point.x)
+        const ys = data.map((point) => point.y)
+
+        const A = math.matrix([
+            [data.length, math.sum(xs)],
+            [math.sum(xs), math.sum(math.dotPow(xs, 2))],
+        ])
+
+        const b = math.matrix([
+            [math.sum(ys)],
+            [math.sum(math.dotMultiply(xs, ys))],
+        ])
+
+        const coefficients = math
+            .lusolve(A, b)
+            .toArray()
+            .flat()
+            .map((value: math.MathNumericType) => Number(value))
+
+        return coefficients
     }
 
-    const updateChart = () => {
-        const originalData = {
-            label: 'Original Data',
-            data: xValues.map((x, i) => ({ x, y: yValues[i] })),
-            borderColor: 'blue',
-            backgroundColor: 'transparent',
-            showLine: false,
-            fill: false,
-        }
-
-        const coefficients = linearApproximation(xValues, yValues)
-
-        const xValuesApprox = Array.from({ length: 2 }, (_, i) =>
-            i === 0 ? Math.min(...xValues) : Math.max(...xValues)
-        )
-        const yValuesApprox = xValuesApprox.map(
-            (x) => coefficients[0] + coefficients[1] * x
-        )
-
-        const linearApproximationData = {
-            label: 'Linear Approximation',
-            data: xValuesApprox.map((x, i) => ({ x, y: yValuesApprox[i] })),
-            borderColor: 'red',
-            backgroundColor: 'transparent',
-            showLine: true,
-            fill: false,
-        }
-
-        if (chartInstance) {
-            chartInstance.destroy()
-        }
-
-        chartInstance = new Chart('myCanvas', {
+    useEffect(() => {
+        chartRef.current = new Chart('myCanvas', {
             type: 'scatter',
             data: {
-                datasets: [originalData, linearApproximationData],
+                datasets: [],
             },
             options: {
                 scales: {
@@ -95,7 +64,61 @@ const Linear = () => {
                 },
             },
         })
-    }
+
+        return () => {
+            if (chartRef.current) {
+                chartRef.current.destroy()
+            }
+        }
+    }, [])
+
+    useEffect(() => {
+        if (chartRef.current) {
+            if (chartRef.current.data.datasets.length > 0) {
+                chartRef.current.data.datasets[0] = {
+                    data: data,
+                    borderColor: 'red',
+                    backgroundColor: 'transparent',
+                }
+            } else {
+                chartRef.current.data.datasets.push({
+                    data: data,
+                    borderColor: 'red',
+                    backgroundColor: 'transparent',
+                })
+            }
+            chartRef.current.update()
+        }
+    }, [data])
+
+    useEffect(() => {
+        if (chartRef.current && data.length > 0) {
+            const linearFunctionPoints = data.map((point) => {
+                const x = point.x
+                const y = coefficients[0] * x + coefficients[1]
+                return { x, y }
+            })
+
+            if (chartRef.current.data.datasets.length > 1) {
+                chartRef.current.data.datasets[1] = {
+                    data: linearFunctionPoints,
+                    borderColor: 'blue',
+                    backgroundColor: 'transparent',
+                    fill: false,
+                    showLine: true,
+                }
+            } else {
+                chartRef.current.data.datasets.push({
+                    data: linearFunctionPoints,
+                    borderColor: 'blue',
+                    backgroundColor: 'transparent',
+                    fill: false,
+                    showLine: true,
+                })
+            }
+            chartRef.current.update()
+        }
+    }, [data, coefficients])
 
     return (
         <div>
@@ -145,15 +168,31 @@ const Linear = () => {
                     Plot
                 </Button>
             </Box>
-            <div
-                style={{
-                    marginTop: '50px',
-                    width: '700px',
-                    height: '500px',
-                    marginLeft: '20px',
-                }}
-            >
-                <canvas id="myCanvas"></canvas>
+            <div style={{ display: 'flex' }}>
+                <div
+                    style={{
+                        marginTop: '50px',
+                        width: '700px',
+                        height: '500px',
+                        marginLeft: '20px',
+                    }}
+                >
+                    <canvas id="myCanvas"></canvas>
+                </div>
+                <Typography
+                    sx={{
+                        fontSize: '20px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        color: 'blue',
+                        mt: 3,
+                        alignItems: 'center',
+                    }}
+                >
+                    {coefficients.length === 2
+                        ? `y = ${coefficients[0]}x + ${coefficients[1]}`
+                        : ''}
+                </Typography>
             </div>
         </div>
     )
