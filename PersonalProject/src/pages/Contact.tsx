@@ -12,7 +12,7 @@ import {
 import levanImage from '../logo/leo.jpeg'
 import georgeImage from '../logo/kurta.jpeg'
 import irakliImage from '../logo/kere.jpeg'
-import './Contact.css' // Import the CSS file
+import './Contact.css'
 
 const Contact = () => {
     return (
@@ -21,30 +21,24 @@ const Contact = () => {
                 <Typography
                     variant="h4"
                     component="h1"
-                    gutterBottom
                     align="center"
-                    sx={{ color: 'green' }}
+                    sx={{ color: 'green', padding: '20px' }}
                 >
                     Contact Page
                 </Typography>
 
+                <hr style={{ marginBottom: '20px' }} />
+
                 <Grid container spacing={4}>
                     <Grid item xs={12} sm={6} md={4}>
-                        <Card
-                            sx={{
-                                height: '100%',
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}
-                            className="slide-in"
-                        >
+                        <Card className="slide-in">
                             <CardMedia
                                 component="img"
                                 height="250"
                                 image={levanImage}
                                 alt="Levan Dalbashvili"
                             />
-                            <CardContent sx={{ flexGrow: 1 }}>
+                            <CardContent>
                                 <Typography
                                     gutterBottom
                                     variant="h5"
@@ -54,7 +48,7 @@ const Contact = () => {
                                 </Typography>
                                 <Typography>
                                     Email:{' '}
-                                    <Link href="https://mail.google.com/mail">
+                                    <Link href="mailto:levanidalbashvili00@gmail.com">
                                         levanidalbashvili00@gmail.com
                                     </Link>
                                 </Typography>
@@ -73,21 +67,14 @@ const Contact = () => {
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4}>
-                        <Card
-                            sx={{
-                                height: '100%',
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}
-                            className="slide-in"
-                        >
+                        <Card className="slide-in">
                             <CardMedia
                                 component="img"
                                 height="250"
                                 image={georgeImage}
                                 alt="George Kurtanidze"
                             />
-                            <CardContent sx={{ flexGrow: 1 }}>
+                            <CardContent>
                                 <Typography
                                     gutterBottom
                                     variant="h5"
@@ -97,18 +84,18 @@ const Contact = () => {
                                 </Typography>
                                 <Typography>
                                     Email:{' '}
-                                    <Link href="https://mail.google.com/mail">
-                                        george@example.com
+                                    <Link href="mailto:thinkers.struggle@gmail.com">
+                                        thinkers.struggle@gmail.com
                                     </Link>
                                 </Typography>
                                 <Typography>
                                     Instagram:{' '}
                                     <Link
-                                        href="https://www.instagram.com/george"
+                                        href="https://www.instagram.com/gio_kurttanidze"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        @george
+                                        @gio_kurttanidze
                                     </Link>
                                 </Typography>
                             </CardContent>
@@ -116,21 +103,14 @@ const Contact = () => {
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4}>
-                        <Card
-                            sx={{
-                                height: '100%',
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}
-                            className="slide-in"
-                        >
+                        <Card className="slide-in">
                             <CardMedia
                                 component="img"
                                 height="250"
                                 image={irakliImage}
                                 alt="Irakli Kereleishvili"
                             />
-                            <CardContent sx={{ flexGrow: 1 }}>
+                            <CardContent>
                                 <Typography
                                     gutterBottom
                                     variant="h5"
@@ -140,18 +120,18 @@ const Contact = () => {
                                 </Typography>
                                 <Typography>
                                     Email:{' '}
-                                    <Link href="https://mail.google.com/mail">
-                                        irakli@example.com
+                                    <Link href="mailto:kereleishviliirakli81@gmail.com">
+                                        kereleishviliirakli81@gmail.com
                                     </Link>
                                 </Typography>
                                 <Typography>
                                     Instagram:{' '}
                                     <Link
-                                        href="https://www.instagram.com/irakli"
+                                        href="https://www.instagram.com/iraklikereleishvili"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        @irakli
+                                        @iraklikereleishvili
                                     </Link>
                                 </Typography>
                             </CardContent>

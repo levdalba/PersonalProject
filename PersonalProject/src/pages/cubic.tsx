@@ -1,44 +1,66 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Box, TextField, Button, Typography } from '@mui/material'
-import { Chart, LineController, LinearScale, PointElement } from 'chart.js'
+import {
+    Chart,
+    LinearScale,
+    ScatterController,
+    PointElement,
+    LineElement,
+} from 'chart.js'
 
-Chart.register(LineController, LinearScale, PointElement)
+Chart.register(LinearScale, ScatterController, PointElement, LineElement)
 
 const Cubic = () => {
-    const [coordinates, setCoordinates] = useState({ x: 0, y: 0 })
+    const [xInput, setXInput] = useState('')
+    const [yInput, setYInput] = useState('')
+    const [data, setData] = useState<{ x: number; y: number }[]>([])
+    const chartRef = useRef<Chart | null>(null)
 
-    const handleCoordinateChange = (type: string, value: string) => {
-        setCoordinates((prev) => ({ ...prev, [type]: parseFloat(value) }))
+    const addData = () => {
+        setData((prev) => [
+            ...prev,
+            { x: parseFloat(xInput), y: parseFloat(yInput) },
+        ])
     }
 
-    const plotGraph = () => {
-        const canvas = document.getElementById('myCanvas') as HTMLCanvasElement
-        const ctx = canvas.getContext('2d')
-        if (ctx) {
-            new Chart(ctx, {
-                type: 'scatter',
-                data: {
-                    datasets: [
-                        {
-                            label: 'Cubic Function',
-                            data: [coordinates],
-                            borderColor: 'blue',
-                            fill: false,
-                            showLine: false,
-                        },
-                    ],
+    useEffect(() => {
+        chartRef.current = new Chart('myCanvas', {
+            type: 'scatter',
+            data: {
+                datasets: [],
+            },
+            options: {
+                scales: {
+                    x: { type: 'linear', position: 'bottom' },
                 },
-                options: {
-                    scales: {
-                        x: { type: 'linear', position: 'bottom' },
-                    },
-                    responsive: true,
-                    maintainAspectRatio: false,
-                },
-            })
+            },
+        })
+
+        return () => {
+            if (chartRef.current) {
+                chartRef.current.destroy()
+            }
         }
-        setCoordinates({ x: 0, y: 0 }) // Reset coordinates
-    }
+    }, [])
+
+    useEffect(() => {
+        if (chartRef.current) {
+            if (chartRef.current.data.datasets.length > 0) {
+                chartRef.current.data.datasets[0] = {
+                    data: data,
+                    borderColor: 'red',
+                    backgroundColor: 'transparent',
+                }
+            } else {
+                chartRef.current.data.datasets.push({
+                    data: data,
+                    borderColor: 'red',
+                    backgroundColor: 'transparent',
+                })
+            }
+            chartRef.current.update()
+        }
+    }, [data])
 
     return (
         <div>
@@ -64,35 +86,30 @@ const Cubic = () => {
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                 <TextField
-                    label={`X`}
+                    label="X Value"
                     variant="outlined"
                     sx={{ mr: 2 }}
                     InputProps={{ style: { borderRadius: 10 } }}
-                    value={coordinates.x}
-                    onChange={(e) =>
-                        handleCoordinateChange('x', e.target.value)
-                    }
+                    value={xInput}
+                    onChange={(e) => setXInput(e.target.value)}
                 />
                 <TextField
-                    label={`Y`}
+                    label="Y Value"
                     variant="outlined"
                     sx={{ mr: 2 }}
                     InputProps={{ style: { borderRadius: 10 } }}
-                    value={coordinates.y}
-                    onChange={(e) =>
-                        handleCoordinateChange('y', e.target.value)
-                    }
+                    value={yInput}
+                    onChange={(e) => setYInput(e.target.value)}
                 />
                 <Button
                     sx={{ width: '150px', borderRadius: '20px' }}
                     variant="contained"
                     color="warning"
-                    onClick={plotGraph}
+                    onClick={addData}
                 >
                     Plot
                 </Button>
             </Box>
-
             <div
                 style={{
                     marginTop: '50px',
